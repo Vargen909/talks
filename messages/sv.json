@@ -1,0 +1,38 @@
+{
+  "meta": {
+    "title": "talks…",
+    "description": "Ett minnesbaserat kommunikationsprotokoll."
+  },
+  "splash": {
+    "tagline": "Minne. Beslut. Överenskommelse.",
+    "continue": "Fortsätt",
+    "onboardingLead": "Varje utbyte blir ett spår i protokollet — redo när du behöver återkalla det."
+  },
+  "dashboard": {
+    "title": "Aktiva protokoll",
+    "subtitle": "Senaste minnesspåret från varje tråd.",
+    "searchPlaceholder": "Semantisk återkallelse — beslut, datum, avtal…",
+    "openLedger": "Öppna huvudbok",
+    "empty": "Inga aktiva protokoll ännu."
+  },
+  "ledger": {
+    "title": "Huvudbok",
+    "timeline": "Tidslinje",
+    "files": "Filer",
+    "decisions": "Verifierade beslut",
+    "agreementMode": "Avtaläge",
+    "agreementDescription": "Bekräfta beslutet med biometrisk eller digital signatur. Endast verifierade poster låses till protokollet.",
+    "exitAgreement": "Lämna avtaläge",
+    "signConfirm": "Signera för att bekräfta",
+    "composerPlaceholder": "Skriv ett minne…",
+    "typing": "skriver",
+    "notFound": "Protokollet finns inte i minnet ännu.",
+    "back": "Tillbaka",
+    "dashboardNav": "Översikt"
+  },
+  "protocol": {
+    "summaryLabel": "Protokollsammanfattning",
+    "verified": "Verifierad",
+    "pending": "Avvaktar"
+  }
+}
