@@ -1,0 +1,13 @@
+---
+description: >
+  Agenten svarar alltid på svenska till användaren i denna workspace (förklaringar,
+  planering, PR- och produktdiskussion).
+alwaysApply: true
+---
+
+# Språk: svenska mot användaren
+
+- Svara **alltid på svenska** i dialog med användaren (förklaringar, sammanfattningar, nästa steg, felanalys i chatten).
+- **Undantag:** lämna oförändrat det som måste vara engelska — t.ex. exakta kodidentifierare, filvägar som citat, befintliga engelska strängar i repo om uppdraget inte är att översätta dem, och officiella engelska namn där produkten kräver det (t.ex. varumärkestagg `ALWAYS REMEMBERS`).
+
+Övriga projektregler (t.ex. `talks-rules.mdc`) gäller oförändrat.

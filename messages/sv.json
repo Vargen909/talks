@@ -1,38 +1,263 @@
 {
   "meta": {
-    "title": "talks…",
-    "description": "Ett minnesbaserat kommunikationsprotokoll."
+    "title": "talks",
+    "description": "Talks är ett säkert digitalt avtalssystem — valv, signering och protokollrum för privatpersoner och plattformar som integrerar via API.",
+    "wordmarkAriaLabel": "talks — logotyp"
+  },
+  "common": {
+    "loading": "Hämtar vy"
+  },
+  "brand": {
+    "slogan": "ALWAYS REMEMBERS"
   },
   "splash": {
-    "tagline": "Minne. Beslut. Överenskommelse.",
+    "welcome": "Välkommen till talks",
+    "tagline": "Verifierade samtal. Låsta beslut. Odödlig kontext.",
     "continue": "Fortsätt",
-    "onboardingLead": "Varje utbyte blir ett spår i protokollet — redo när du behöver återkalla det."
+    "onboardingLead": "talks gör varje utbyte till ett spår i protokollet — indexerat, återkallningsbart och redo när du behöver bevisbar kontext."
   },
   "dashboard": {
-    "title": "Aktiva protokoll",
-    "subtitle": "Senaste minnesspåret från varje tråd.",
-    "searchPlaceholder": "Semantisk återkallelse — beslut, datum, avtal…",
+    "title": "Översikt",
+    "subtitle": "Aktiva protokoll, inbjudningar och bekräftelser — allt som rör samma ärende samlas i ett protokoll, inte i en chattlista.",
+    "searchPlaceholder": "Sök i minnet: protokoll, beslut, datum, deltagare med mera",
     "openLedger": "Öppna huvudbok",
-    "empty": "Inga aktiva protokoll ännu."
+    "createProtocol": "Skapa protokoll",
+    "activeProtocols": "Aktiva protokoll",
+    "pendingConfirmations": "Väntar på bekräftelse",
+    "pendingConfirmationsEmpty": "Inga öppna bekräftelsepunkter just nu.",
+    "invitations": "Inbjudningar",
+    "invitationsEmpty": "Inga väntande inbjudningar.",
+    "recentDecisions": "Senaste beslut",
+    "recentActivity": "Protokollaktivitet",
+    "copilotFeed": "Protocol Copilot",
+    "emptyTitle": "Inga aktiva protokoll",
+    "emptyBody": "Skapa ett protokoll för ett ärende — uthyrning, leverans, avtal eller annat. Kommunikation och överenskommelser lever i samma minnesspår.",
+    "recallField": "Sök i minnet",
+    "unreadSignal": "Overifierade poster kvar",
+    "clearLocalProtocols": "Rensa lokala protokoll",
+    "clearLocalProtocolsHint": "Tar bort utkast som sparats i den här webbläsarsessionen. De inbyggda exempelprotokollen påverkas inte.",
+    "clearLocalProtocolsDialogTitle": "Rensa lokala utkast?",
+    "clearLocalProtocolsDialogBody": "Alla protokoll som skapats och sparats lokalt i den här webbläsarsessionen försvinner från den här enheten. Inbyggda exempelprotokoll påverkas inte.",
+    "clearLocalProtocolsCancel": "Avbryt",
+    "clearLocalProtocolsSubmit": "Rensa",
+    "clearLocalProtocolsOverlayAria": "Stäng utan att rensa",
+    "platformLead": "Säkert avtalssystem — privat valv, signaturspår och rum per ärende. Plattformar kan koppla på via API utan att du tappar kontrollen.",
+    "quickVault": "Valv",
+    "quickSignatures": "Signeringar",
+    "inviteCounterparty": "Bjud in motpart"
+  },
+  "newProtocol": {
+    "eyebrow": "Nytt protokoll",
+    "title": "Skapa protokoll",
+    "lead": "Ett protokoll representerar ett ärende mellan parter. Du bjuder in motparten och öppnar sedan huvudboken där allt dokumenteras.",
+    "cancel": "Avbryt",
+    "continue": "Fortsätt",
+    "back": "Tillbaka",
+    "stepIndicator": "Steg {step} av {total}",
+    "step1Label": "Vad gäller protokollet?",
+    "step2Label": "Grunduppgifter",
+    "step3Label": "Bjud in motpart",
+    "step3Hint": "Inbjudan skickas i förhandsläget endast lokalt — ingen extern leverans.",
+    "step4Label": "Sammanfattning",
+    "fieldTitle": "Titel",
+    "fieldDescription": "Kort beskrivning",
+    "fieldAmount": "Belopp / värde (valfritt)",
+    "fieldDeadline": "Deadline (valfritt)",
+    "fieldLocation": "Plats (valfritt)",
+    "fieldInviteEmail": "E-post",
+    "fieldInvitePhone": "Telefon (valfritt)",
+    "inviteLinkPlaceholder": "Inbjudningslänk: aktiveras när delning finns i produkten.",
+    "inviteQrPlaceholder": "QR-kod: reserverad för senare version.",
+    "summaryKind": "Typ",
+    "summaryTitle": "Titel",
+    "summaryDescription": "Beskrivning",
+    "createProtocol": "Skapa och öppna huvudbok",
+    "kinds": {
+      "uthyrning": "Uthyrning",
+      "forsaljning": "Försäljning",
+      "tjanstejobb": "Tjänstejobb",
+      "leverans": "Leverans",
+      "deposition": "Deposition",
+      "samarbete": "Samarbete",
+      "privat": "Privat överenskommelse",
+      "anpassat": "Anpassat"
+    }
   },
   "ledger": {
     "title": "Huvudbok",
+    "loadingLocal": "Läser lokalt protokoll (session)",
     "timeline": "Tidslinje",
-    "files": "Filer",
-    "decisions": "Verifierade beslut",
     "agreementMode": "Avtaläge",
     "agreementDescription": "Bekräfta beslutet med biometrisk eller digital signatur. Endast verifierade poster låses till protokollet.",
     "exitAgreement": "Lämna avtaläge",
     "signConfirm": "Signera för att bekräfta",
-    "composerPlaceholder": "Skriv ett minne…",
-    "typing": "skriver",
+    "composerPlaceholder": "Ny post i protokollet (inaktiverad i förhandsläge)",
+    "memoryIndexing": "Indexerar minneslager",
     "notFound": "Protokollet finns inte i minnet ännu.",
-    "back": "Tillbaka",
-    "dashboardNav": "Översikt"
+    "notFoundHint": "Tillbaka till översikten för att välja ett annat protokoll.",
+    "back": "Tillbaka till översikt",
+    "dashboardNav": "Översikt",
+    "entries": "Dokumenterade poster",
+    "sealedMemory": "Låst minne",
+    "awaitingSeal": "Avvaktar försegling",
+    "timelineCaption": "Indexerade poster — samma minne som i huvudboken, ordnade efter tid och typ.",
+    "checkpointsAside": "Överenskommelser",
+    "checkpointStatus": {
+      "open": "Öppen",
+      "awaiting_signatures": "Väntar på signatur",
+      "confirmed": "Bekräftad",
+      "superseded": "Ersatt"
+    },
+    "blockKinds": {
+      "message": "Kommunikation",
+      "verified_decision": "Verifierat beslut",
+      "agreement_checkpoint": "Överenskommelse",
+      "ai_summary": "AI-sammanfattning",
+      "uploaded_file": "Bilaga",
+      "timeline_event": "Händelse",
+      "signed_confirmation": "Signerad bekräftelse",
+      "semantic_highlight": "Semantisk markering",
+      "protocol_annotation": "Protokollanteckning",
+      "copilot_insight": "Copilot-observation"
+    },
+    "copilot": {
+      "title": "Protocol Copilot",
+      "subtitle": "Lokal protokollanalys — observationer utan extern modell i detta läge.",
+      "signalLabel": "Copilot analyserar protokollet lokalt",
+      "emptyState": "Inga aktiva observationer. Protokollet ser sammanhängande ut utifrån lokala signaler.",
+      "disabledBody": "Protocol Copilot är avstängd. Aktivering sker senare under Inställningar.",
+      "privacyFootnote": "Ingen fullständig historik skickas externt. Vid val av molnassistans används endast minimerad, avidentifierad kontext — alltid synlig för dig innan sändning.",
+      "modeBadge": {
+        "off": "Av",
+        "private_local": "Endast lokal",
+        "verification_only": "Endast verifiering",
+        "cloud_enhanced": "Moln berikat"
+      },
+      "insights": {
+        "unverified_tail": "Poster efter ett förseglat beslut saknar ännu försegling — bekräfta eller arkivera innan nästa steg.",
+        "timeline_unclosed": "Semantisk markering finns kvar utan verifierad koppling — överväg en bekräftelsepunkt.",
+        "checkpoint_suggestion": "Få överenskommelsepunkter registrerade — en lugn verifieringspost kan låsa ansvar och tid."
+      }
+    }
   },
   "protocol": {
-    "summaryLabel": "Protokollsammanfattning",
+    "summaryLabel": "AI-sammanfattning",
     "verified": "Verifierad",
-    "pending": "Avvaktar"
+    "pending": "Avvaktar",
+    "workspaceLabel": "Protokoll",
+    "kindLabel": "Typ",
+    "statusLabel": "Status",
+    "participantsLabel": "Deltagare",
+    "pendingInvitesBadge": "{count} väntande inbjudningar",
+    "kind": {
+      "uthyrning": "Uthyrning",
+      "forsaljning": "Försäljning",
+      "tjanstejobb": "Tjänstejobb",
+      "leverans": "Leverans",
+      "deposition": "Deposition",
+      "samarbete": "Samarbete",
+      "privat": "Privat överenskommelse",
+      "anpassat": "Anpassat"
+    },
+    "status": {
+      "draft": "Utkast",
+      "active": "Aktivt",
+      "awaiting_invite": "Väntar på inbjudan",
+      "pending_confirmations": "Väntar på bekräftelse",
+      "verification_required": "Verifiering krävs",
+      "archived": "Arkiverat"
+    },
+    "role": {
+      "owner": "Ägare",
+      "counterparty": "Motpart",
+      "observer": "Observatör"
+    },
+    "inviteStatus": {
+      "none": "—",
+      "draft": "Utkast",
+      "sent": "Inbjudan skickad",
+      "awaiting_response": "Väntar på svar",
+      "accepted": "Deltagare ansluten",
+      "declined": "Avböjd",
+      "expired": "Utgången"
+    }
+  },
+  "nav": {
+    "home": "Hem",
+    "agreements": "Avtal",
+    "signatures": "Signeringar",
+    "vault": "Valv",
+    "create": "Skapa",
+    "copilot": "Copilot",
+    "integrations": "Integrationer",
+    "account": "Konto"
+  },
+  "shell": {
+    "more": "Mer",
+    "moreTitle": "Mer i Talks",
+    "closeMenu": "Stäng meny",
+    "primaryNavAria": "Huvudnavigation"
+  },
+  "product": {
+    "positioning": "Talks är ett säkert digitalt avtalssystem där människor och plattformar kan skapa, diskutera, förstå, signera, lagra och följa upp överenskommelser.",
+    "agreementRoomNote": "Varje avtal har ett Agreement Room — samma yta som huvudboken: tidslinje, filer, beslut och signaturspår på ett ställe."
+  },
+  "agreementsHub": {
+    "title": "Avtal",
+    "subtitle": "Alla ärenden och pågående överenskommelser — privat eller via en kopplad plattform.",
+    "searchPlaceholder": "Sök bland titlar, status och nyckelord",
+    "searchField": "Sök avtal",
+    "openRoom": "Öppna rum",
+    "empty": "Inga avtal ännu. Skapa ett avtal för att starta ett säkert rum.",
+    "ledgerHint": "Huvudboken är ert gemensamma rum för ärendet."
+  },
+  "signaturesCenter": {
+    "title": "Signeringar",
+    "subtitle": "Vad som väntar på dig, motparten eller juridisk slutlighet.",
+    "awaitingMe": "Väntar på mig",
+    "awaitingOthers": "Väntar på andra",
+    "checkpoints": "Bekräftelsepunkter",
+    "invites": "Inbjudningar",
+    "emptyMe": "Inget som kräver din signatur just nu.",
+    "emptyOthers": "Inga öppna väntan-på-andra-signaturer i mock-läget.",
+    "emptyCheckpoints": "Inga bekräftelsepunkter som väntar i mock-läget.",
+    "emptyInvites": "Inga utestående inbjudningar i mock-läget.",
+    "openAgreement": "Öppna avtal"
+  },
+  "vault": {
+    "title": "Agreement Vault",
+    "subtitle": "Signerade och pågående avtal samlade — ditt juridiska valv.",
+    "filterAll": "Alla",
+    "filterActive": "Aktiva",
+    "filterArchived": "Arkiverade",
+    "columnsTitle": "Avtal",
+    "columnsStatus": "Status",
+    "columnsUpdated": "Uppdaterad",
+    "open": "Öppna",
+    "empty": "Valvet är tomt i den här vyn."
+  },
+  "copilotHub": {
+    "title": "Protocol Copilot",
+    "subtitle": "AI-stöd som endast arbetar inom avtalets kontext — aldrig som öppen chattbot.",
+    "body": "Koppla Copilot till ett avtal via huvudboken. Här visas senare globala signaler; idag lever observationer per protokoll.",
+    "ctaLedger": "Gå till avtal",
+    "privacy": "Copilot ska inte hitta på juridiska fakta eller skicka känslig data utanför avtalad backend — se även fotnot i huvudboken."
+  },
+  "integrations": {
+    "title": "Integrationer",
+    "subtitle": "API, webhooks och inbäddade rum för plattformar som bygger på Talks.",
+    "apiTitle": "API (planerat)",
+    "apiBody": "REST under /api/v1/* med nycklar per plattformsklient — se teknisk TODO i kodbasen.",
+    "webhookTitle": "Webhooks",
+    "webhookBody": "Händelser som agreement.created, signature.completed, obligation.due m.m.",
+    "embedTitle": "Inbäddat rum",
+    "embedBody": "Iframe eller signerad deep-link till användarens valv.",
+    "docsTodo": "TODO: öppen API-dokumentation och sandlåda."
+  },
+  "account": {
+    "title": "Konto & säkerhet",
+    "subtitle": "Profil, enheter och åtkomst — kommer när inloggning är kopplad.",
+    "todoAuth": "TODO: autentisering, 2FA och sessionslista.",
+    "todoOrg": "TODO: organisationer och plattformsroller (multi-tenant)."
   }
 }

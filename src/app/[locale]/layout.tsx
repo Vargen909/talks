@@ -1,5 +1,6 @@
 import { hasLocale, NextIntlClientProvider } from "next-intl";
-import { getMessages, setRequestLocale } from "next-intl/server";
+import { getMessages, getTranslations, setRequestLocale } from "next-intl/server";
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
 
@@ -13,6 +14,25 @@ type LocaleLayoutProps = {
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+
+  if (!hasLocale(routing.locales, locale)) {
+    return { title: "talks" };
+  }
+
+  const t = await getTranslations({ locale, namespace: "meta" });
+
+  return {
+    title: t("title"),
+    description: t("description"),
+  };
 }
 
 export default async function LocaleLayout({ children, params }: LocaleLayoutProps) {

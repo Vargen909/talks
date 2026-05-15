@@ -1,0 +1,47 @@
+---
+description: >
+  Talks: parallel mobile-first and desktop-first UI. Enforces responsive/adaptive
+  layouts, navigation, tables, modals, motion, loading states, and overflow-safe
+  patterns whenever editing frontend sources under src/.
+globs:
+  - "src/**/*.tsx"
+  - "src/**/*.ts"
+  - "src/**/*.css"
+alwaysApply: false
+---
+
+# Responsive & adaptive frontend (Talks)
+
+When editing files matched by **`src/**/*.{tsx,ts,css}`**, treat **mobile and desktop as one delivery**: implement breakpoints, density, and interaction patterns **together** — never ship one viewport as “done” and defer the other.
+
+## Required
+
+1. **Responsive development** — Tailwind breakpoints (`sm`/`md`/`lg`/`xl`), fluid spacing, `min-w-0` on flex children where truncation/scroll is intended; **container queries** when a component must behave correctly inside variable-width parents.
+
+2. **Adaptive layouts** — do not only shrink a desktop layout. Use **meaningful** changes (e.g. stack vs side-by-side, sheet vs centered dialog, collapsed vs expanded nav) while **sharing state/data**, not duplicating business logic.
+
+3. **Mobile / tablet / desktop** — layouts must **transition smoothly** without jumps, clipped primary actions, or broken overflow at common widths (including **landscape** on small devices where relevant).
+
+4. **Responsive navigation** — primary nav must be usable on small screens (e.g. compact bar, overflow menu, bottom nav **when product IA calls for it**); on large screens use **efficient** placement without hover-only access to core routes.
+
+5. **Mobile-friendly tables** — no wide desktop-only grids on small viewports without a strategy: **card/stack**, **priority columns**, **horizontal scroll as last resort** with clear affordance, or **progressive disclosure**. Prefer patterns from `@/lib/ui/talks-surfaces` and existing shell/components for consistency.
+
+6. **Adaptive modals** — dialogs/sheets: **full-screen or bottom-sheet style on narrow viewports** when content or keyboard risk clipping; centered/max-width on `md+`. Preserve **focus trap**, **scroll**, and **safe-area** insets for fixed chrome.
+
+7. **Responsive animations** — reuse **`@/lib/motion/talks-motion`**; avoid large translations or parallax on mobile that cause jank or off-screen content; respect **`prefers-reduced-motion`** where motion is decorative.
+
+8. **Premium loading states** — use **`TalksSignalDots`** / existing loading primitives; no bare spinners or layout-popping skeletons that shift content when data arrives.
+
+9. **No horizontal overflow** — fix root cause (width constraints, `min-w-0`, image `max-w-full`, table strategy); do not rely on **`overflow-x: hidden`** alone to mask broken layout.
+
+10. **No desktop-only layouts** — every primary flow must be completable on **small touch** viewports.
+
+11. **No mobile-only hacks** — avoid one-off `!important`, magic negative margins, or fixed px widths that “fix” mobile but break tablet/desktop; use shared tokens and responsive classes.
+
+## Cross-reference
+
+Product constitution (including **§2.5** parallel mobile/desktop) lives in **`talks-rules.mdc`** (`alwaysApply: true`). This file **narrows and reinforces** those expectations **whenever** you touch matched frontend paths.
+
+## Before considering UI “done”
+
+Sanity-check **mobile**, **tablet**, **desktop**, and **landscape** (where applicable) for the changed surfaces.

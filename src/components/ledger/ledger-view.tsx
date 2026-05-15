@@ -2,15 +2,39 @@
 
 import { motion } from "framer-motion";
 import { useTranslations } from "next-intl";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { AgreementDialog } from "@/components/agreement/agreement-dialog";
-import { TalksTypingIndicator } from "@/components/brand/talks-typing-indicator";
+import { BrandLockup } from "@/components/brand/brand-lockup";
+import { TalksBrandLoading } from "@/components/brand/talks-brand-loading";
+import { TalksSignalDots } from "@/components/brand/talks-signal-dots";
+import { LedgerProtocolTimeline } from "@/components/ledger/ledger-protocol-timeline";
+import { ProtocolWorkspaceBanner } from "@/components/ledger/protocol-workspace-banner";
+import { ProtocolCopilotPanel } from "@/components/ledger/protocol-copilot-panel";
+import { ledgerBlockKindI18nKey, resolveLedgerBlockKind } from "@/components/ledger/protocol-ledger-block";
 import { MotionButton } from "@/components/ui/motion-button";
 import { Link } from "@/i18n/navigation";
+import type { ProtocolThread } from "@/lib/memory/types";
+import { mockProtocolCatalog, mockProtocolSummary } from "@/lib/adapters/memory-adapters";
+import { mockProtocolCopilot } from "@/lib/adapters/copilot-adapter";
 import { cn } from "@/lib/cn";
-import { generateProtocolSummary } from "@/lib/memory/protocol-summary";
-import { getProtocol } from "@/lib/mock-protocols";
+import { groupLedgerEntriesByDay } from "@/lib/ledger/group-by-day";
+import { protocolWorkspaceToThread } from "@/lib/protocol/ledger-bridge";
+import { getProtocolWorkspace } from "@/lib/mock-protocols";
+import { listVolatileWorkspaces } from "@/lib/protocol/volatile-workspaces";
+import { talksTapScale } from "@/lib/motion/talks-motion";
+import {
+  talksAgreementToggleActiveClass,
+  talksAgreementToggleIdleClass,
+  talksComposerFrameClass,
+  talksComposerShellClass,
+  talksEmptyPanelClass,
+  talksLedgerAsideClass,
+  talksLedgerMainClass,
+  talksMutedNavControlClass,
+  talksSummaryPanelClass,
+  talksTimelineAsideItemClass,
+} from "@/lib/ui/talks-surfaces";
 
 type LedgerViewProps = {
   protocolId: string;
@@ -19,26 +43,66 @@ type LedgerViewProps = {
 export function LedgerView({ protocolId }: LedgerViewProps) {
   const t = useTranslations("ledger");
   const tProtocol = useTranslations("protocol");
-  const protocol = getProtocol(protocolId);
+  const [mounted, setMounted] = useState(false);
+  const [volatileThread, setVolatileThread] = useState<ProtocolThread | undefined>(undefined);
+
+  const catalogProtocol = useMemo(() => mockProtocolCatalog.findById(protocolId), [protocolId]);
+
+  useEffect(() => {
+    listVolatileWorkspaces();
+    queueMicrotask(() => {
+      if (!catalogProtocol) {
+        const ws = getProtocolWorkspace(protocolId);
+        setVolatileThread(ws ? protocolWorkspaceToThread(ws) : undefined);
+      } else {
+        setVolatileThread(undefined);
+      }
+      setMounted(true);
+    });
+  }, [catalogProtocol, protocolId]);
+
+  const protocol = catalogProtocol ?? volatileThread;
+
   const [agreementOpen, setAgreementOpen] = useState(false);
   const [agreementSurface, setAgreementSurface] = useState(false);
-
   const summary = useMemo(() => {
     if (!protocol) return "";
-    return generateProtocolSummary(protocol.lastMessages);
+    return mockProtocolSummary.summarize(protocol.lastMessages);
+  }, [protocol]);
+
+  const timelineAsideItems = useMemo(() => {
+    if (!protocol) return [];
+    return groupLedgerEntriesByDay(protocol.lastMessages).flatMap((g) => g.items);
+  }, [protocol]);
+
+  const workspace = useMemo(() => mockProtocolCatalog.findWorkspaceById(protocolId) ?? null, [protocolId]);
+  const copilotAnalysis = useMemo(() => {
+    if (!protocol) return null;
+    return mockProtocolCopilot.analyze(protocol);
   }, [protocol]);
 
   if (!protocol) {
+    if (!mounted) {
+      return (
+        <div className="mx-auto flex min-h-[70dvh] max-w-lg flex-col justify-center px-5 py-16 sm:px-8">
+          <div className={cn("flex flex-col items-center", talksEmptyPanelClass)}>
+            <TalksBrandLoading dense minHeight="0" className="py-0" />
+            <p className="mt-6 text-sm font-normal leading-relaxed text-titanium/55">{t("loadingLocal")}</p>
+          </div>
+        </div>
+      );
+    }
     return (
-      <div className="mx-auto max-w-3xl px-6 py-20 text-titanium/70">
-        {t("notFound")}
-        <div className="mt-6">
-          <Link
-            href="/dashboard"
-            className="text-sm uppercase tracking-[0.3em] text-champagne hover:text-champagne/80"
-          >
-            {t("back")}
-          </Link>
+      <div className="mx-auto flex min-h-[70dvh] max-w-lg flex-col justify-center px-5 py-16 sm:px-8">
+        <div className={cn("flex flex-col items-center", talksEmptyPanelClass)}>
+          <TalksSignalDots variant="static" size="md" className="mb-6 text-champagne/80" />
+          <p className="text-sm font-normal leading-relaxed text-titanium/80">{t("notFound")}</p>
+          <p className="mt-3 max-w-sm text-[13px] font-normal leading-relaxed text-titanium/48">{t("notFoundHint")}</p>
+          <motion.div className="mt-10" whileTap={{ scale: talksTapScale }}>
+            <Link href="/dashboard" className={talksMutedNavControlClass}>
+              {t("back")}
+            </Link>
+          </motion.div>
         </div>
       </div>
     );
@@ -47,8 +111,8 @@ export function LedgerView({ protocolId }: LedgerViewProps) {
   return (
     <div
       className={cn(
-        "relative min-h-[100dvh] bg-obsidian text-titanium transition-[filter] duration-500",
-        agreementSurface && "blur-[1.5px]",
+        "relative min-h-dvh bg-obsidian text-titanium transition-[filter] duration-700 ease-out",
+        agreementSurface && "brightness-[0.98]",
       )}
     >
       <AgreementDialog
@@ -61,37 +125,35 @@ export function LedgerView({ protocolId }: LedgerViewProps) {
         }}
       />
 
-      <div className="mx-auto flex max-w-6xl flex-col gap-8 px-4 py-10 lg:flex-row lg:px-8">
+      <div className="mx-auto flex max-w-6xl flex-col gap-8 px-5 py-10 sm:gap-10 sm:px-7 sm:py-14 lg:flex-row lg:gap-10 lg:px-10">
         <main
           className={cn(
-            "flex-1 space-y-6 rounded-3xl border border-white/10 bg-ether/70 p-6 lg:p-8",
-            agreementSurface && "border-champagne/70 shadow-[0_0_0_1px_rgba(200,169,126,0.35)]",
+            talksLedgerMainClass,
+            agreementSurface &&
+              "border-champagne/22 shadow-[0_0_0_1px_rgba(201,171,130,0.12),0_0_72px_-14px_rgba(201,171,130,0.1)]",
           )}
         >
-          <header className="flex flex-wrap items-center justify-between gap-4">
-            <div>
-              <p className="text-[10px] uppercase tracking-[0.35em] text-champagne/80">
-                talks… / {t("title")}
-              </p>
-              <h1 className="text-2xl font-light">{protocol.title}</h1>
+          <header className="flex flex-col gap-8 border-b border-white/6 pb-8 sm:flex-row sm:items-start sm:justify-between sm:gap-6">
+            <div className="space-y-4">
+              <BrandLockup size="compact" align="start" showSlogan />
+              <div>
+                <p className="text-[10px] font-medium uppercase tracking-[0.26em] text-titanium/38">
+                  {t("title")} · {protocol.id}
+                </p>
+                <h1 className="mt-2 text-xl font-light leading-snug tracking-tight text-titanium sm:text-2xl">
+                  {protocol.title}
+                </h1>
+              </div>
             </div>
-            <div className="flex flex-wrap gap-3">
-              <motion.div whileTap={{ scale: 0.98 }}>
-                <Link
-                  href="/dashboard"
-                  className="rounded-full border border-white/10 px-4 py-2 text-xs uppercase tracking-[0.25em] text-titanium/70 transition-colors hover:border-white/30 hover:text-titanium"
-                >
+            <div className="flex flex-wrap gap-3 sm:justify-end">
+              <motion.div whileTap={{ scale: talksTapScale }}>
+                <Link href="/dashboard" className={talksMutedNavControlClass}>
                   {t("dashboardNav")}
                 </Link>
               </motion.div>
               <MotionButton
                 type="button"
-                className={cn(
-                  "border px-4 py-2 text-xs uppercase tracking-[0.25em]",
-                  agreementSurface
-                    ? "border-champagne/70 bg-champagne/10 text-champagne"
-                    : "border-white/15 text-titanium/80 hover:border-champagne/50 hover:text-champagne",
-                )}
+                className={agreementSurface ? talksAgreementToggleActiveClass : talksAgreementToggleIdleClass}
                 onClick={() => {
                   if (agreementSurface) {
                     setAgreementOpen(false);
@@ -107,79 +169,98 @@ export function LedgerView({ protocolId }: LedgerViewProps) {
             </div>
           </header>
 
-          <section className="rounded-2xl border border-white/10 bg-obsidian/40 p-4">
-            <p className="text-[10px] uppercase tracking-[0.3em] text-champagne/80">
+          {workspace ? <ProtocolWorkspaceBanner workspace={workspace} /> : null}
+
+          <section className={talksSummaryPanelClass}>
+            <p className="text-[10px] font-medium uppercase tracking-[0.28em] text-champagne/62">
               {tProtocol("summaryLabel")}
             </p>
-            <p className="mt-2 text-sm leading-relaxed text-titanium/80">{summary}</p>
+            <p className="mt-3 text-[13px] font-normal leading-relaxed text-titanium/72 sm:text-sm">{summary}</p>
           </section>
 
-          <section className="space-y-4">
-            {protocol.lastMessages.map((message, index) => (
-              <motion.div
-                key={message.id}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.06, duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
-                className="grid gap-3 rounded-2xl border border-white/10 bg-obsidian/35 px-5 py-4 lg:grid-cols-[1fr_auto]"
-              >
-                <div className="space-y-2">
-                  <p className="text-[11px] uppercase tracking-[0.25em] text-titanium/45">
-                    {new Date(message.createdAt).toLocaleString("sv-SE")}
+          {copilotAnalysis ? <ProtocolCopilotPanel analysis={copilotAnalysis} motionOffset={2} /> : null}
+
+          <section>
+            <p className="mb-5 text-[10px] font-medium uppercase tracking-[0.28em] text-titanium/42">{t("entries")}</p>
+            <LedgerProtocolTimeline messages={protocol.lastMessages} />
+          </section>
+
+          <footer className="border-t border-white/6 pt-8">
+            <div className={talksComposerFrameClass}>
+              <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between sm:gap-6">
+                <div
+                  className={cn(
+                    talksComposerShellClass,
+                    "flex-1 border-white/8 bg-white/[0.02] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.04)]",
+                  )}
+                >
+                  <p className="text-[12px] font-normal leading-relaxed text-titanium/40 sm:text-sm">
+                    {t("composerPlaceholder")}
                   </p>
-                  <p className="text-sm leading-relaxed text-titanium/85">{message.content}</p>
                 </div>
-                <div className="flex flex-col items-start gap-2 lg:items-end">
-                  <span
-                    className={cn(
-                      "rounded-full px-3 py-1 text-[10px] uppercase tracking-[0.25em]",
-                      message.verified_status
-                        ? "border border-champagne/40 text-champagne"
-                        : "border border-white/10 text-titanium/55",
-                    )}
-                  >
-                    {message.verified_status ? tProtocol("verified") : tProtocol("pending")}
-                  </span>
-                  {message.agreement_id ? (
-                    <span className="text-[10px] uppercase tracking-[0.25em] text-titanium/45">
-                      {message.agreement_id}
-                    </span>
-                  ) : null}
+                <div className="flex shrink-0 items-center gap-3.5 text-[10px] font-medium uppercase tracking-[0.2em] text-titanium/42 sm:text-[11px]">
+                  <TalksSignalDots variant="thinking" size="sm" />
+                  <span className="max-w-[11rem] leading-snug sm:max-w-none">{t("memoryIndexing")}</span>
                 </div>
-              </motion.div>
-            ))}
-          </section>
-
-          <footer className="flex items-center gap-3 border-t border-white/10 pt-4">
-            <div className="relative flex-1">
-              <div className="rounded-full border border-white/10 bg-obsidian/60 px-4 py-3 text-sm text-titanium/45">
-                {t("composerPlaceholder")}
               </div>
-            </div>
-            <div className="flex items-center gap-2 text-xs uppercase tracking-[0.25em] text-titanium/50">
-              <span>{t("typing")}</span>
-              <TalksTypingIndicator />
             </div>
           </footer>
         </main>
 
-        <aside className="w-full shrink-0 space-y-4 lg:w-72">
-          <div className="rounded-3xl border border-white/10 bg-ether/80 p-5">
-            <p className="text-[10px] uppercase tracking-[0.3em] text-champagne/80">
-              {t("timeline")}
-            </p>
-            <ul className="mt-4 space-y-3 text-sm text-titanium/75">
-              {protocol.lastMessages.map((message) => (
-                <li
-                  key={`${message.id}-tl`}
-                  className="flex flex-col gap-1 border-b border-white/5 pb-3 last:border-b-0"
-                >
-                  <span className="text-[11px] uppercase tracking-[0.2em] text-titanium/45">
-                    {message.verified_status ? t("decisions") : t("files")}
-                  </span>
-                  <span className="leading-snug">{message.content}</span>
-                </li>
-              ))}
+        <aside className="flex w-full shrink-0 flex-col gap-6 lg:w-80">
+          {workspace && workspace.agreementCheckpoints.length > 0 ? (
+            <div className={talksLedgerAsideClass}>
+              <p className="text-[10px] font-medium uppercase tracking-[0.28em] text-champagne/62">{t("checkpointsAside")}</p>
+              <ul className="mt-4 space-y-3">
+                {workspace.agreementCheckpoints.map((c) => (
+                  <li key={c.id} className={talksTimelineAsideItemClass}>
+                    <span className="text-[11px] font-medium leading-snug text-titanium/78">{c.title}</span>
+                    <span className="mt-1.5 block text-[10px] font-medium uppercase tracking-[0.18em] text-titanium/40">
+                      {t(`checkpointStatus.${c.status}`)}
+                    </span>
+                    <span className="mt-2 block text-[12px] font-normal leading-relaxed text-titanium/55">{c.summary}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ) : null}
+          <div className={talksLedgerAsideClass}>
+            <p className="text-[10px] font-medium uppercase tracking-[0.28em] text-champagne/62">{t("timeline")}</p>
+            <p className="mt-2 text-[10px] font-normal leading-relaxed text-titanium/38">{t("timelineCaption")}</p>
+            <ul className="mt-6 space-y-3">
+              {timelineAsideItems.map((message) => {
+                const kind = resolveLedgerBlockKind(message);
+                return (
+                  <li key={`${message.id}-tl`} className={talksTimelineAsideItemClass}>
+                    <div className="flex flex-wrap items-baseline justify-between gap-2">
+                      <span className="text-[10px] font-medium uppercase tracking-[0.2em] text-champagne/52">
+                        {t(ledgerBlockKindI18nKey(kind))}
+                      </span>
+                      <time
+                        dateTime={message.createdAt}
+                        className="font-mono text-[10px] font-medium tabular-nums tracking-[0.1em] text-titanium/35"
+                      >
+                        {new Date(message.createdAt).toLocaleString("sv-SE", {
+                          dateStyle: "short",
+                          timeStyle: "short",
+                        })}
+                      </time>
+                    </div>
+                    <span className="mt-2 block text-[10px] font-medium uppercase tracking-[0.18em] text-titanium/38">
+                      {message.verified_status ? t("sealedMemory") : t("awaitingSeal")}
+                    </span>
+                    <span className="mt-1.5 block text-[13px] font-normal leading-snug text-titanium/75">
+                      {message.blockTitle ? (
+                        <>
+                          <span className="text-titanium/55">{message.blockTitle}</span>
+                          <span className="mx-1.5 text-titanium/30">·</span>
+                        </>
+                      ) : null}
+                      {message.content}
+                    </span>
+                  </li>
+                );
+              })}
             </ul>
           </div>
         </aside>

@@ -4,6 +4,7 @@ import { motion, type HTMLMotionProps } from "framer-motion";
 import * as React from "react";
 
 import { cn } from "@/lib/cn";
+import { talksTapScale, talksTapTransition } from "@/lib/motion/talks-motion";
 
 export type MotionButtonProps = HTMLMotionProps<"button">;
 
@@ -11,10 +12,13 @@ export const MotionButton = React.forwardRef<HTMLButtonElement, MotionButtonProp
   ({ className, children, ...props }, ref) => (
     <motion.button
       ref={ref}
-      whileTap={{ scale: 0.98 }}
-      transition={{ type: "spring", stiffness: 520, damping: 32 }}
+      whileTap={{ scale: talksTapScale }}
+      transition={talksTapTransition}
       className={cn(
-        "inline-flex items-center justify-center rounded-full outline-none transition-opacity duration-200 focus-visible:ring-2 focus-visible:ring-champagne/60 focus-visible:ring-offset-2 focus-visible:ring-offset-obsidian disabled:pointer-events-none disabled:opacity-40",
+        "inline-flex items-center justify-center rounded-2xl outline-none",
+        "transition-[transform,opacity,box-shadow] duration-500 ease-out",
+        "focus-visible:ring-2 focus-visible:ring-champagne/28 focus-visible:ring-offset-2 focus-visible:ring-offset-obsidian",
+        "disabled:pointer-events-none disabled:opacity-35",
         className,
       )}
       {...props}

@@ -1,36 +1,38 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# talks
 
-## Getting Started
+Next.js-app med **next-intl** (locale **`sv`**, alltid prefix i URL: `/sv/...`).
 
-First, run the development server:
+## Krav
+
+- **Node.js** 20 eller senare rekommenderas (Next 16 / Turbopack).
+
+## Kom igång
 
 ```bash
+cd talks
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Öppna **http://localhost:3000** — du redirectas till t.ex. **http://localhost:3000/sv** (splash) eller gå direkt till **http://localhost:3000/sv/dashboard**.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Bygga för produktion
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run lint
+npm run build
+npm run start
+```
 
-## Learn More
+`npm run start` kör produktionsserver (standardport **3000**).
 
-To learn more about Next.js, take a look at the following resources:
+Internationell routing och säkerhetsheaders sker i [`src/proxy.ts`](src/proxy.ts) (Next.js 16 **Proxy**, tidigare *middleware*).
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Felsökning (Windows)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- **Kör bara en `npm run dev` åt gången.** Om port 3000 är upptagen: stäng den gamla terminalen eller avsluta processen som lyssnar på 3000.
+- **`Persisting failed` / `os error 5` (Åtkomst nekad)** mot `.next`: stäng alla `node`-processer, kör `npm run clean`, starta sedan `npm run dev` igen. Undvik att köra `npm run build` och `npm run dev` samtidigt mot samma projektmapp.
 
-## Deploy on Vercel
+## Kodkonventioner
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Se [`.cursor/rules/talks-rules.mdc`](.cursor/rules/talks-rules.mdc) — produktnamn i text: **talks**; wordmark med signalprickar via komponenter under `src/components/brand/`.

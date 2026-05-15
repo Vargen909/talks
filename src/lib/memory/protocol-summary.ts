@@ -1,8 +1,8 @@
 import type { MemoryMessage } from "./types";
 
 /**
- * Anslutningspunkt mot LLM för protokollsammanfattningar.
- * Triggas var 20:e meddelande eller vid aktivering av avtaläge.
+ * Deterministic summary until a `ProtocolSummaryPort` implementation
+ * (model, rules engine, or hybrid) is wired in production.
  */
 export function generateProtocolSummary(messages: MemoryMessage[]): string {
   if (messages.length === 0) {
@@ -13,7 +13,7 @@ export function generateProtocolSummary(messages: MemoryMessage[]): string {
   const preview = tail.content.slice(0, 120).trim();
   const verified = messages.filter((m) => m.verified_status).length;
 
-  return `Protokoll (${messages.length} poster, ${verified} verifierade): senaste linjen — «${preview}${preview.length >= 120 ? "…" : ""}».`;
+  return `AI-sammanfattning (${messages.length} poster, ${verified} förseglade): senaste linje — «${preview}${preview.length >= 120 ? "…" : ""}».`;
 }
 
 export const PROTOCOL_SUMMARY_INTERVAL = 20;

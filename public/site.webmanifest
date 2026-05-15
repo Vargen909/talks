@@ -1,0 +1,17 @@
+{
+  "name": "talks",
+  "short_name": "talks",
+  "description": "Minnesbaserat kommunikationsprotokoll för verifierade beslut och avtal.",
+  "start_url": "/sv",
+  "display": "standalone",
+  "background_color": "#060912",
+  "theme_color": "#060912",
+  "icons": [
+    {
+      "src": "/icon",
+      "sizes": "32x32",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

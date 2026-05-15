@@ -1,66 +1,75 @@
 "use client";
 
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 
-import { TalksWordmark } from "@/components/brand/talks-wordmark";
+import { BrandLockup } from "@/components/brand/brand-lockup";
+import { TalksSplashScreen } from "@/components/splash/TalksSplashScreen";
 import { MotionButton } from "@/components/ui/motion-button";
 import { Link } from "@/i18n/navigation";
+import { cn } from "@/lib/cn";
+import { talksStagger, talksFadeRaise, TALKS_EASE, talksTapScale } from "@/lib/motion/talks-motion";
+import { talksPrimaryCtaSplashClass, talksPrimaryCtaWideLinkClass } from "@/lib/ui/talks-surfaces";
 
-const container = {
-  hidden: {},
-  show: {
-    transition: { staggerChildren: 0.18, delayChildren: 0.12 },
-  },
-};
-
-const item = {
-  hidden: { opacity: 0, y: 14 },
-  show: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.85, ease: [0.22, 1, 0.36, 1] as const },
-  },
-};
+const container = talksStagger();
+const item = talksFadeRaise(10);
 
 export function SplashView() {
   const t = useTranslations("splash");
   const [step, setStep] = useState<0 | 1>(0);
+  const reduceMotion = useReducedMotion();
 
   return (
-    <div className="relative flex min-h-[100dvh] flex-col items-center justify-center overflow-hidden bg-obsidian px-6 py-16 text-titanium">
-      <motion.div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(200,169,126,0.08),transparent_45%),radial-gradient(circle_at_80%_0%,rgba(232,234,241,0.05),transparent_40%)]"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 1.4 }}
-      />
+    <TalksSplashScreen>
       <AnimatePresence mode="wait">
         {step === 0 ? (
           <motion.div
             key="intro"
-            className="relative z-10 flex max-w-lg flex-col items-center gap-10 text-center"
+            className="flex w-full min-w-0 max-w-lg flex-col items-center gap-8 text-center sm:gap-10 md:gap-12"
             initial="hidden"
             animate="show"
-            exit={{ opacity: 0, y: -10, transition: { duration: 0.45 } }}
+            exit={{ opacity: 0, y: -8, transition: { duration: 0.5, ease: TALKS_EASE } }}
             variants={container}
           >
-            <motion.div variants={item}>
-              <TalksWordmark pulse />
+            <motion.div
+              variants={item}
+              className="w-full min-w-0 drop-shadow-[0_22px_52px_rgba(201,171,130,0.11)] md:drop-shadow-[0_26px_60px_rgba(201,171,130,0.12)]"
+            >
+              {reduceMotion ? (
+                <div className="flex justify-center">
+                  <BrandLockup pulse size="hero" align="center" priority />
+                </div>
+              ) : (
+                <motion.div
+                  className="flex justify-center"
+                  animate={{ y: [0, -2.5, 0] }}
+                  transition={{ duration: 5.5, repeat: Infinity, ease: TALKS_EASE }}
+                >
+                  <BrandLockup pulse size="hero" align="center" priority />
+                </motion.div>
+              )}
             </motion.div>
             <motion.p
               variants={item}
-              className="text-sm uppercase tracking-[0.35em] text-titanium/70"
+              className="max-w-[min(100%,22rem)] text-[11px] font-light uppercase tracking-[0.34em] text-titanium/70 sm:text-xs sm:tracking-[0.36em]"
+            >
+              {t("welcome")}
+            </motion.p>
+            <motion.p
+              variants={item}
+              className="max-w-[min(100%,22rem)] text-[11px] uppercase leading-relaxed tracking-[0.32em] text-titanium/58 sm:text-xs sm:tracking-[0.34em]"
             >
               {t("tagline")}
             </motion.p>
-            <motion.div variants={item}>
+            <motion.div variants={item} className="w-full min-w-0 px-1 sm:px-0">
               <MotionButton
                 type="button"
                 onClick={() => setStep(1)}
-                className="bg-champagne/90 px-10 py-3 text-sm font-medium uppercase tracking-[0.28em] text-obsidian hover:bg-champagne"
+                className={cn(
+                  talksPrimaryCtaSplashClass,
+                  "mx-auto w-full max-w-sm min-h-11 sm:min-h-12 sm:max-w-md",
+                )}
               >
                 {t("continue")}
               </MotionButton>
@@ -69,18 +78,25 @@ export function SplashView() {
         ) : (
           <motion.div
             key="onboarding"
-            className="relative z-10 flex max-w-md flex-col items-center gap-8 text-center"
-            initial={{ opacity: 0, y: 16 }}
+            className="flex w-full min-w-0 max-w-md flex-col items-center gap-7 text-center sm:gap-8 md:gap-10"
+            initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -12 }}
-            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.65, ease: TALKS_EASE }}
           >
-            <TalksWordmark />
-            <p className="text-base leading-relaxed text-titanium/80">{t("onboardingLead")}</p>
-            <motion.div whileTap={{ scale: 0.98 }}>
+            <div className="w-full min-w-0 drop-shadow-[0_18px_44px_rgba(201,171,130,0.09)]">
+              <BrandLockup size="hero" pulse={false} />
+            </div>
+            <p className="max-w-[min(100%,24rem)] text-sm leading-[1.7] text-titanium/72 sm:text-[0.95rem]">
+              {t("onboardingLead")}
+            </p>
+            <motion.div whileTap={{ scale: talksTapScale }} className="w-full min-w-0 px-1 sm:px-0">
               <Link
                 href="/dashboard"
-                className="inline-flex items-center justify-center rounded-full bg-champagne/90 px-10 py-3 text-sm font-medium uppercase tracking-[0.28em] text-obsidian transition-opacity duration-200 hover:bg-champagne focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-champagne/70"
+                className={cn(
+                  talksPrimaryCtaWideLinkClass,
+                  "mx-auto flex w-full max-w-sm min-h-11 items-center justify-center sm:min-h-12 sm:max-w-md",
+                )}
               >
                 {t("continue")}
               </Link>
@@ -88,6 +104,6 @@ export function SplashView() {
           </motion.div>
         )}
       </AnimatePresence>
-    </div>
+    </TalksSplashScreen>
   );
 }

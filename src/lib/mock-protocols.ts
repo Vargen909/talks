@@ -1,43 +1,14 @@
 import type { ProtocolThread } from "@/lib/memory/types";
+import { protocolWorkspaceToThread } from "@/lib/protocol/ledger-bridge";
+import { getStaticWorkspaceById, staticProtocolWorkspaces } from "@/lib/protocol/mock-workspaces";
+import type { Protocol } from "@/lib/protocol/domain-types";
+import { listVolatileWorkspaces } from "@/lib/protocol/volatile-workspaces";
 
-export const mockProtocols: ProtocolThread[] = [
-  {
-    id: "p-aurora",
-    title: "Aurora / Leverans",
-    lastInteractionAt: "2026-05-12",
-    summary:
-      "Leveransfönster bekräftat till torsdag; risklogg uppdaterad med kundnotering.",
-    lastMessages: [
-      {
-        id: "m1",
-        content: "Bekräftar torsdag 09-12 som leveransfönster.",
-        createdAt: "2026-05-12T09:12:00.000Z",
-        verified_status: true,
-        agreement_id: "agr-884",
-      },
-      {
-        id: "m2",
-        content: "Notifierar kund via primär kanal.",
-        createdAt: "2026-05-12T09:14:00.000Z",
-        verified_status: false,
-      },
-    ],
-  },
-  {
-    id: "p-north",
-    title: "Northwind / Avtal",
-    lastInteractionAt: "2026-05-10",
-    summary: "Klausul 4 under omförhandling; signatur pausad i avvaktan på juridik.",
-    lastMessages: [
-      {
-        id: "m3",
-        content: "Pausa signatur tills klausul 4 är omformulerad.",
-        createdAt: "2026-05-10T16:02:00.000Z",
-        verified_status: true,
-      },
-    ],
-  },
-];
+function allThreads(): ProtocolThread[] {
+  const fromVolatile = listVolatileWorkspaces().map(protocolWorkspaceToThread);
+  const fromStatic = staticProtocolWorkspaces.map(protocolWorkspaceToThread);
+  return [...fromVolatile, ...fromStatic];
+}
 
 export function recallScore(query: string, protocol: ProtocolThread) {
   const q = query.trim().toLowerCase();
@@ -48,18 +19,22 @@ export function recallScore(query: string, protocol: ProtocolThread) {
     if (message.verified_status && message.content.toLowerCase().includes(q)) {
       score += 5;
     }
+    const extra = [message.blockTitle, message.artifactLabel]
+      .filter(Boolean)
+      .join(" ")
+      .toLowerCase();
+    if (extra.includes(q)) score += 4;
   }
   if (protocol.title.toLowerCase().includes(q)) score += 3;
   if (protocol.summary.toLowerCase().includes(q)) score += 1;
+  if (protocol.protocolKind?.toLowerCase().includes(q)) score += 2;
   return score;
 }
 
 export function filterProtocols(query: string): ProtocolThread[] {
-  const base = [...mockProtocols];
+  const base = allThreads();
   if (!query.trim()) {
-    return base.sort(
-      (a, b) => Date.parse(b.lastInteractionAt) - Date.parse(a.lastInteractionAt),
-    );
+    return base.sort((a, b) => Date.parse(b.lastInteractionAt) - Date.parse(a.lastInteractionAt));
   }
   return base
     .map((p) => ({ p, s: recallScore(query, p) }))
@@ -69,5 +44,11 @@ export function filterProtocols(query: string): ProtocolThread[] {
 }
 
 export function getProtocol(id: string): ProtocolThread | undefined {
-  return mockProtocols.find((p) => p.id === id);
+  return allThreads().find((p) => p.id === id);
+}
+
+export function getProtocolWorkspace(id: string): Protocol | undefined {
+  const v = listVolatileWorkspaces().find((p) => p.id === id);
+  if (v) return v;
+  return getStaticWorkspaceById(id);
 }

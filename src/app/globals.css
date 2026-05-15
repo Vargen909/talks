@@ -2,29 +2,46 @@
 
 :root {
   color-scheme: dark;
-  --background: #070b14;
-  --foreground: #e8eaf1;
+  --background: #060912;
+  --foreground: #e8eaef;
+  --ether: #0d111c;
+  --champagne: #c9ab82;
+  --talk-radius-sm: 0.125rem;
+  --talk-section-y-mobile: 3.5rem;
+  --talk-section-y-desktop: 4.5rem;
 }
 
 @theme inline {
-  --color-obsidian: #070b14;
-  --color-titanium: #e8eaf1;
-  --color-champagne: #c8a97e;
-  --color-ether: #111625;
+  --color-obsidian: #060912;
+  --color-titanium: #e8eaef;
+  --color-champagne: #c9ab82;
+  --color-ether: #0d111c;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
+html {
+  text-rendering: geometricPrecision;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
 body {
   min-height: 100dvh;
   background: var(--background);
+  background-image:
+    radial-gradient(ellipse 100% 80% at 50% -30%, rgba(201, 171, 130, 0.06), transparent 52%),
+    radial-gradient(ellipse 80% 50% at 100% 0%, rgba(232, 234, 239, 0.03), transparent 45%);
   color: var(--foreground);
   font-family: var(--font-geist-sans), system-ui, sans-serif;
+  font-weight: 400;
+  letter-spacing: 0.011em;
+  line-height: 1.6;
 }
 
 ::selection {
-  background: color-mix(in srgb, var(--color-champagne) 35%, transparent);
+  background: color-mix(in srgb, var(--color-champagne) 28%, transparent);
   color: var(--color-obsidian);
 }

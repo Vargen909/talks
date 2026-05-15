@@ -1,0 +1,288 @@
+---
+description: >
+  Permanent constitution for the talks product: luxury-tech cinematic UI, three-dot
+  identity, semantic recall, strict minimalism, scalable architecture, no generic SaaS.
+  Enforces brand naming (talks vs talks…), motion, surfaces, and engineering patterns.
+alwaysApply: true
+---
+
+# talks — permanent utvecklingskonstitution
+
+Detta är **projektets Cursor-regelverk** (`alwaysApply: true`). Det ska följas automatiskt i alla framtida sessioner i denna workspace. Avvikelser ska motiveras skriftligt eller refaktoreras bort.
+
+---
+
+## Namngivning (obligatorisk åtskillnad)
+
+| Användning | Korrekt form |
+|------------|----------------|
+| **Produktnamn** i copy, metadata, `package.json`, README, förklarande text | **talks** (gemener, inga visuella prickar i löptext om det inte är logotyp). |
+| **Logo / wordmark / lockup** (UI-komponent, titelrad som varumärke, `TalksWordmark`, marknadsföring där märket visas som grafisk enhet) | **talks…** — ellipsisen utgörs av **tre champagne-prickar** (`TalksSignalDots` / wordmark), **inte** tre ASCII-punkter (`...`) i logotypläge. |
+
+**Exempel:** “**talks** är ett minnesbaserat kommunikationsprotokoll.” Rubrik i appen som varumärke: `TalksWordmark` visar **talks** + signalprickar (läses som **talks…**).
+
+---
+
+## 0. Produktlöfte
+
+**talks** är ett **minnesbaserat kommunikationsprotokoll** — inte en chattapp. Gränssnittet ska kännas som **verifierad, beständig kontext**: beslut, avtal, tidslinjer — aldrig flöde, stickers eller “social” lekfullhet.
+
+**Global identitet (permanent):**
+
+- **Luxury-tech** visuellt språk: dyr, lugn, precis — inte startup-mall.
+- **Cinematic dark UI**: obsidian ytor, mjuka övergångar, sparsam belysning (champagne), filmisk bakgrund där det passar (`CinematicBackdrop`).
+- **Premium motion**: diskret, sammanhängande kurvor — se §6 och `@/lib/motion/talks-motion`.
+- **Strukturerad kommunikation**: protokoll, poster, tidslinjer — inte “chatttråd”.
+- **Semantic recall**: återkallelse som koncept i UI och copy; sökfält ska kännas som *minne*, inte generisk SaaS-sökbar.
+- **Tre-prickssystem**: all signal-laddning / tänkande / oläst via **`TalksSignalDots`** med semantiskt `variant`.
+- **Strikt minimalism**: ett primärt fokus per vy, inga onödiga lager.
+- **Skalbar arkitektur**: adapters, typer, återanvändbara ytor — se §4.
+- **Parallell mobil + desktop**: all ny funktion, komponent, sida och UI-ändring ska utvecklas **mobile-first och desktop-first samtidigt** — aldrig “desktop först, mobil senare” eller tvärtom; se **§2.5**.
+- **Inga generiska SaaS-mönster**: inga kpi-rutor, “global search”, chattbubblor, lekfull bounce — se §5.
+
+---
+
+## 1. Varumärke & identitet
+
+| Element | Krav |
+|--------|------|
+| **Wordmark** | Endast via `TalksWordmark` / `BrandLockup` — **talks** + tre champagne-prickar; ingen hårdkodad `talks...` med ASCII-punkter i logotypläge. |
+| **Slogan** | `ALWAYS REMEMBERS` (engelska, fast copy) via `BrandLockup` eller `useTranslations("brand")`. |
+| **Tre-prickssystem** | Alla tillstånd “väntar / tänker / laddar / oläst” → **`TalksSignalDots`** med `variant`, inte egna spinners eller tre slumpmässiga div:ar. |
+| **Champagne** | Endast **accent**: etiketter, ramar, fokus, prickar, sällsynt glow — aldrig stora ytor eller “guldgradient-startup”. |
+| **Obsidian** | Primär bakgrund; djup, nästan svart — inte blått Discord-mörker. |
+| **Titanium** | Primär text; hög läsbarhet med **dämpade** hierarkier (`/60`, `/45` för sekundärt). |
+
+---
+
+## 2. UX-filosofi
+
+- **Varje interaktion** ska kännas avsiktlig: tydlig hover/fokus, inga slumpmässiga animationer.
+- **Inget clutter**: en primär handling per yta; undvik dubbla rubriker och “dashboard-widgets”.
+- **Lugn yta**: gott om luft, förutsägbar rytm, inga blinkande tillstånd.
+- **Minne först**: copy och layout ska prata om **protokoll, försegling, återkallelse** — inte “skriv meddelande”.
+- **Strukturerad kommunikation**: listor som tidslinjer / poster, inte bubblor.
+- **Övergångar**: mjuka **opacity** och **korta** translationer — se §6.
+- **Laddning**: **`TalksSignalDots`** (`loading` / `thinking` / `pulse`) — inga neon-spinners.
+- **Semantic recall**: tydligt fält (etikett + input), inte “global search bar à la SaaS”.
+
+---
+
+## 2.5 Parallell mobil- och desktoputveckling (permanent global regel)
+
+**Omfattning:** all **ny** funktionalitet, **nya** komponenter, **nya** sidor och **alla** UI-förändringar.
+
+**Grundprincip:** bygg **mobil och desktop parallellt** i samma implementation — inte en plattform “klar” först med den andra som eftersläntrare.
+
+### Förbjudet för agenter
+
+- Bygga klart **desktop först** och “fixa mobil senare”.
+- Bygga **endast mobil** och lägga till desktop i separat steg.
+- Layouts som **bara** fungerar på stora skärmar.
+- **Desktop-tabeller** utan tydlig mobilstrategi (t.ex. kortvy, scroll, kolumnprioritering).
+- **Mobilvyer** som känns ihoptryckta eller begränsade på desktop när mer yta finns.
+- **Hover-only** funktionalitet (samma handling ska nås utan hover).
+- **overflow-x**-klistermärken utan att orsaken åtgärdas.
+- **Minimala klickytor** under rimlig touchstandard (se §3.1).
+
+### 2.5.1 Mobilanpassning (ska alltid ingå direkt)
+
+- Små skärmar: läsbar typografi, rimlig vertikal rytm, inga horisontella spill.
+- **Touchvänliga** element; **safe areas** där fast UI (nav, sheets) möter skärmkant.
+- **Bottom navigation** eller motsvarande **där det är relevant** för appens informationsarkitektur.
+- **Swipevänliga** ytor där gesten är avsedd (t.ex. listor som kan svepas — med tydlig affordance).
+- **Responsiva kort** (stapling, full bredd, inga fastlåsta breda rader som klipper innehåll).
+- **Tangentbord**: fokusordning, scroll till fokus, inga inputs gömda bakom keyboard på mobil.
+- **Inga overflow-problem** (clip, scroll, eller omdesign — inte bara `hidden`).
+- **Layout shift**: undvik att innehåll hoppar när typsnitt, bilder eller async-data landar (reserverad yta, fasta proportioner där det passar).
+
+### 2.5.2 Desktopanpassning (ska alltid ingå direkt)
+
+- Utnyttja **större workspace**: informationsdensitet där det stärker överblick utan clutter.
+- **Sidopaneler**, **multi-column** eller **side-by-side** där det **förbättrar** arbetsflödet (inte dekor).
+- **Hover states** som kompletterar, inte ersätter, primär navigation.
+- **Effektiv navigation** (t.ex. synlig sekundär nav, snabbare åtkomst till ofta använda ytor).
+- **Widescreen**: intelligent användning av bredd — inte “en smal kolumn mitt i tom rymd” om ytan kan bära mer struktur utan att bryta minimalismen (§0–§2).
+
+### 2.5.3 Responsiv logik
+
+- Sömlös övergång **mobil → tablet → desktop**; Tailwind-breakpoints (`sm` / `md` / `lg` / `xl`) och vid behov **container queries**.
+- Inga **hopp** eller **trasiga brytpunkter**; testa gränserna mellan breakpoints.
+- **Konsekvent spacing** över storlekar (4-pt-rutnätet i §3.1).
+
+### 2.5.4 Adaptiv UX (inte bara skalning)
+
+**talks** ska inte bara “zoomas om”. Anpassa **mönster** efter enhet där det ger värde, t.ex.:
+
+- Mobil: staplade kort, **bottom sheets** där det passar, fokus på **snabba actions**.
+- Desktop: **paneler**, **side-by-side**, mer **överblick** utan att bli dashboard-mall (§5).
+
+### 2.5.5 Teknisk implementation
+
+- **Flex/grid** responsivt; **container queries** när komponenten ska vara återanvändbar oberoende av viewport.
+- **Conditional rendering** när det **tydligt** förbättrar UX (t.ex. sheet på mobil, dialog/panel på desktop) — men dela underliggande data/tillstånd, duplicera inte affärslogik.
+- **Undvik** onödigt hårdkodade **layout**-bredder/höjder i px som låser en breakpoint; **undantag**: fasta proportioner för media/ikon/wordmark för att undvika layout shift (§3.1, §2.5.1).
+
+### 2.5.6 Test-regel (ingen feature “klar” utan detta)
+
+Vid ny funktion: kontrollera **mobilvy**, **tabletvy**, **desktopvy**, och **landscape** på mobil/tablet **där det är relevant**. Ingen feature anses färdig innan vyerna beter sig korrekt.
+
+### 2.5.7 Designmål
+
+- **Native** på mobil; **kraftfull** på desktop; **premium** på båda.
+- Aldrig: “mobilapp utsträckt till desktop” eller “desktop ihoptryckt till mobil”.
+
+---
+
+## 3. UI-standarder
+
+### 3.1 Spacing (mobil först)
+
+Använd **4-pt-rutnät** via Tailwind (4, 5, 6, 8, 10, 12, 16 …). På mobil: **minst 44px touchmål** på primära actions. Vertikal padding på sidor: `py-12`–`py-16` på större skärmar, något tätare på mobil om ytan kräver.
+
+CSS-variabler i `globals.css` (`:root`) ska spegla skalan; utöka vid behov men **ändra inte** befintliga tokens godtyckligt.
+
+### 3.2 Typografi
+
+- **Rubriker**: `font-light`, tight tracking, inga tunga black-vikter för H1–H2.
+- **Etiketter**: uppercase, `tracking-[0.22em]`–`0.32em]`, `10px`–`11px`, champagne eller titanium `/40`–`/70`.
+- **Brödtext**: `text-sm` / `13px`, `leading-relaxed` eller `leading-[1.65]`, maxradlängd ~65 tecken där det är möjligt.
+- **Metadata / tid**: `font-mono` sparsamt (tidsstämplar, protokoll-id).
+
+### 3.3 Kort & paneler
+
+- **Skarpa eller mycket små radier** — undvik `rounded-2xl` “klistermärkeskort”.
+- Kant: `border-white/[0.06]`–`[0.10]` — **subtil**.
+- Bakgrund: `bg-ether/*` eller `bg-obsidian/*` — låg kontrast mellan ytor för **lager** snarare än “kort som poppar”.
+- **Ingen** tung drop-shadow som SaaS-mall; om skugga: **en** tunn champagne **ring** eller mycket mjuk mörk elevation vid fokus/avtaläge.
+
+### 3.4 Rörelse (se även §6)
+
+- Importera **`talksStagger`**, **`talksFadeRaise`**, **`TALKS_EASE`** från `@/lib/motion/talks-motion` — **duplicera inte** easing-arrayer i varje vy.
+- `whileTap`: **endast** `talksTapScale` (mjuk skala ~0.985–0.99) — ingen aggressiv “bounce”.
+
+### 3.5 Hover & fokus
+
+- Hover: **opacity / border / bakgrund** i små steg (`duration-200`–`300`) — ingen färgchock.
+- Fokus synligt: `focus-visible:outline` eller `ring` i **champagne** — WCAG-krav ska uppfyllas.
+
+### 3.6 Glow
+
+- **Sällan**: primärt på **tredje pricken** i signalen eller vid avtaläge / fokus.
+- Aldrig hela skärmens “neon halo”.
+
+### 3.7 Layouttäthet
+
+- **Mobil**: en kolumn, tydlig scroll, sidopanel under huvudinnehåll.
+- **Desktop**: maxbredd `max-w-5xl` / `max-w-6xl`, generös marginal.
+- Se även **§2.5** för parallell utveckling och adaptiva mönster.
+
+---
+
+## 4. Teknikstandarder
+
+### 4.1 Mappstruktur (skalbart)
+
+- `src/components/brand/` — wordmark, signal, lockup.
+- `src/components/ui/` — återanvändbara primitiver (`MotionButton`, ytor).
+- `src/components/shell/` — bakgrunder och gemensamma skal.
+- `src/components/protocol/` — protokoll-specifika listor/kort.
+- `src/lib/motion/` — **enda** platsen för delade Framer-variantobjekt.
+- `src/lib/ui/` — **enda** platsen för delade Tailwind-class-strängar (t.ex. `@/lib/ui/talks-surfaces`).
+- `src/lib/adapters/` — portar mot backend; **mock först**, riktig implementation senare.
+- `src/lib/memory/` — domäntyper och ren logik utan UI.
+
+### 4.2 Komponenter
+
+- **DRY**: upprepad CTA / kort / dialog → `@/lib/ui/talks-surfaces` (t.ex. `talksPrimaryCtaClass`, `talksProtocolIndexCardClass`, `talksDialogContentClass`).
+- **Ett ansikte per koncept**: t.ex. `ProtocolThreadCard`, `CinematicBackdrop`.
+
+### 4.3 Typer & gränssnitt
+
+- Alla trådar/poster ska ha **typer** i `src/lib/memory/types.ts` (eller närliggande).
+- Data åt UI via **adapter** (`ProtocolCatalog`, `ProtocolSummaryPort`, …) — vyer ska inte importera mockdata direkt om ett adapterlager redan finns.
+
+### 4.4 Tillgänglighet
+
+- Rubriker i rätt ordning; dialoger med Radix ska ha **Title** + **Description**.
+- `TalksSignalDots` med `label` när det är **status** (t.ex. oläst).
+- Tillräcklig kontrast titanium på obsidian.
+
+### 4.5 Internationalisering
+
+- Synlig copy via **next-intl**; inga hårdkodade svenska meningar i komponenter om strängen ska översättas senare.
+
+---
+
+## 5. Förbjudet
+
+- **Chattbubblor** / Messenger-liknande trådar.
+- **Ljusa** “startup”-gradienter över hela vyn.
+- **Emoji** som UI-språk.
+- **Mall-dashboards** (kpi-kort-rutor, generic sidebar).
+- **Överfulla** kort med 5+ visuella nivåer.
+- **Gaming**-estetik (hård neon, skarpa vinklar som sci-fi HUD).
+- **Studsiga** animationer (`stiffness` extrem, stor skala på tap).
+- **Neumorphism** / intryckta plastytor.
+
+---
+
+## 6. Animationsspråk
+
+- **Kurvor**: `TALKS_EASE` = `[0.22, 1, 0.36, 1]` som standard.
+- **Fade-in**: opacity 0→1, valfritt `y: 8–14px` — kort duration (0.45–0.8s).
+- **Stagger**: 0.05–0.16s mellan syskon — inte långsam “kaskadshow”.
+- **Ingen** oändlig attention-grab utanför varumärkes-signalen.
+- **Laddning**: prickarnas “andas” — långsam, nästan omärklig.
+
+---
+
+## 7. Komponentfilosofi
+
+Varje komponent ska kännas **tidlös, dyr, strukturerad, lugn, intelligent**. Om en ny komponent känns “gratis template” — skriv om den eller strunta i den.
+
+---
+
+## 8. Checklista innan PR / merge
+
+- [ ] Inga nya hårdkodade färghex utanför tokens (undantag: dokumenterad engångsgradient i shell — helst tokeniserad).
+- [ ] Motion från `@/lib/motion/talks-motion` där mönstret återanvänds.
+- [ ] Ytor från `@/lib/ui/talks-surfaces` för primär/sekundär CTA och protokollkort.
+- [ ] **§2.5:** mobil + desktop (eller adaptivt motsvarande) adresserat **i samma ändring**; touchmål; inga hover-only flows; inga trasiga tabeller på små skärmar.
+- [ ] **§2.5.6:** snabb visuell/resize-kontroll mobil / tablet / desktop (+ landscape där relevant).
+- [ ] Inga förbjudna mönster i §5.
+- [ ] Adapter för data när det inte är ren presentation.
+- [ ] **Namngivning:** produkt = **talks**; wordmark = **talks…** (prickar via komponenter).
+
+---
+
+## 9. Revision / drift
+
+Vid större UI-ändringar: uppdatera **denna regelfil** om principen ändras — konstitutionen och koden ska ligga i fas.
+
+**Senast refaktorerat mot denna konstitution:** se git-historik för `talks-surfaces`, `talks-motion`, `ProtocolThreadCard`, `CinematicBackdrop`.
+
+---
+
+## 10. Revision — avvikelser som åtgärdats (baseline)
+
+| Avvikelse | Åtgärd |
+|-----------|--------|
+| Duplicerade Framer-easingar och stagger-mönster i vyer | Centraliserat i `src/lib/motion/talks-motion.ts` (`TALKS_EASE`, `talksStagger`, `talksFadeRaise`, `talksListItem`, `talksTimelineEntry`, `talksTapScale`). |
+| Långa duplicerade Tailwind-strängar för CTA / kort / dialog | `src/lib/ui/talks-surfaces.ts` med namngivna ytor. |
+| Dashboard-protokollkort inbäddat i en stor vyfil | `src/components/protocol/protocol-thread-card.tsx`. |
+| Splash med inline gradient + brus | `src/components/shell/cinematic-backdrop.tsx`. |
+| `MotionButton` med hård `scale: 0.98` + aggressiv fjäder | Samma tap-skala som constitution; mjukare fjäder; `rounded-sm` i linje med minimalism. |
+| `TalksSignalDots` typing/unread/pulse för “bouncy” | Mjukare `y`-förflyttning och mindre scale på unread/pulse. |
+| Ledger duplicerad slogan-rad (`BrandLockup` + manuell `ALWAYS REMEMBERS`) | En källa: `BrandLockup` med `showSlogan`. |
+| Hårdkodad dialog-overlay-färg | `bg-obsidian/88` via `talksDialogOverlayClass`. |
+
+**Kvarstående förbättringar (frivilliga):** harmonisera Tailwind opacity-syntax (`/5` vs `/[0.05]`) enligt linter-preferenser; ev. utöka `@theme` med fler `--talk-*`-tokens när nya ytor tillkommer.
+
+---
+
+## 11. Arv i Cursor (ingen manuell inklistring)
+
+När **`alwaysApply: true`** är satt i denna fil laddar **Cursor** reglerna från `.cursor/rules/talks-rules.mdc` **automatiskt** i agenter som respekterar projektregler för **denna workspace**. Nya chattar och framtida kodgenerering ska därmed **ärva konstitutionen utan** att användaren klistrar in prompten igen.
+
+*Verifiering:* öppna **Cursor Settings → Rules** (eller projektets regelvy) och bekräfta att **talks**-regeln listas som **Always Apply**. Primär fil: **`.cursor/rules/talks-rules.mdc`** (inte `.md`). Om en agent-session inte läser projektregler, kontrollera att arbetet sker **i repo-roten** där `.cursor/rules/` finns.
